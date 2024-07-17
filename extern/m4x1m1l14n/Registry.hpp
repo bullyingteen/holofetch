@@ -213,7 +213,7 @@ namespace m4x1m1l14n
 
 				DWORD dwOptions = 0;
 
-				LSTATUS lStatus = RegOpenKeyEx(m_hKey, path.c_str(), dwOptions, static_cast<REGSAM>(access), &hKey);
+				LSTATUS lStatus = RegOpenKeyExW(m_hKey, path.c_str(), dwOptions, static_cast<REGSAM>(access), &hKey);
 				if (lStatus != ERROR_SUCCESS)
 				{
 					auto ec = std::error_code(lStatus, std::system_category());
@@ -256,7 +256,7 @@ namespace m4x1m1l14n
 				LPSECURITY_ATTRIBUTES lpSecurityAttributes = nullptr;
 
 				LSTATUS lStatus =
-					RegCreateKeyEx(
+					RegCreateKeyExW(
 						m_hKey,
 						path.c_str(),
 						dwReserved,
@@ -295,13 +295,13 @@ namespace m4x1m1l14n
 
 			void Delete(const std::wstring& name)
 			{
-				LSTATUS lStatus = RegDeleteValue(m_hKey, name.c_str());
+				LSTATUS lStatus = RegDeleteValueW(m_hKey, name.c_str());
 				// In case registry entry with specified name is not registry Value
 				// RegDeleteValue() returns ERROR_FILE_NOT_FOUND, so we will try to
 				// delete registry entry as if it is registry Key
 				if (lStatus == ERROR_FILE_NOT_FOUND)
 				{
-					lStatus = RegDeleteTree(m_hKey, name.c_str());
+					lStatus = RegDeleteTreeW(m_hKey, name.c_str());
 				}
 
 				if (lStatus != ERROR_SUCCESS && lStatus != ERROR_FILE_NOT_FOUND)
@@ -327,7 +327,7 @@ namespace m4x1m1l14n
 			{
 				LPSECURITY_ATTRIBUTES lpSecurityAttributes = nullptr;
 
-				LSTATUS lStatus = RegSaveKey(m_hKey, file.c_str(), lpSecurityAttributes);
+				LSTATUS lStatus = RegSaveKeyW(m_hKey, file.c_str(), lpSecurityAttributes);
 				if (lStatus != ERROR_SUCCESS)
 				{
 					auto ec = std::error_code(lStatus, std::system_category());
@@ -353,7 +353,7 @@ namespace m4x1m1l14n
 
 				HKEY hKey = nullptr;
 
-				LSTATUS lStatus = RegOpenKeyEx(m_hKey, path.c_str(), 0, KEY_READ, &hKey);
+				LSTATUS lStatus = RegOpenKeyExW(m_hKey, path.c_str(), 0, KEY_READ, &hKey);
 
 				if (lStatus == ERROR_SUCCESS)
 				{
@@ -389,7 +389,7 @@ namespace m4x1m1l14n
 
 				auto hasValue = false;
 
-				LSTATUS lStatus = RegQueryValueEx(m_hKey, name.c_str(), nullptr, nullptr, nullptr, nullptr);
+				LSTATUS lStatus = RegQueryValueExW(m_hKey, name.c_str(), nullptr, nullptr, nullptr, nullptr);
 				if (lStatus == ERROR_SUCCESS)
 				{
 					hasValue = true;
@@ -412,7 +412,7 @@ namespace m4x1m1l14n
 
 				LPDWORD lpReserver = nullptr;
 
-				LSTATUS lStatus = RegQueryValueEx(m_hKey, name.c_str(), lpReserver, &dwType, reinterpret_cast<LPBYTE>(&dwData), &cbData);
+				LSTATUS lStatus = RegQueryValueExW(m_hKey, name.c_str(), lpReserver, &dwType, reinterpret_cast<LPBYTE>(&dwData), &cbData);
 				if (lStatus != ERROR_SUCCESS)
 				{
 					auto ec = std::error_code(lStatus, std::system_category());
@@ -439,7 +439,7 @@ namespace m4x1m1l14n
 				DWORD dwValue = value ? 1 : 0;
 				DWORD cbData = sizeof(dwValue);
 
-				LSTATUS lStatus = RegSetValueEx(m_hKey, name.c_str(), 0, REG_DWORD, reinterpret_cast<const LPBYTE>(&dwValue), cbData);
+				LSTATUS lStatus = RegSetValueExW(m_hKey, name.c_str(), 0, REG_DWORD, reinterpret_cast<const LPBYTE>(&dwValue), cbData);
 				if (lStatus != ERROR_SUCCESS)
 				{
 					auto ec = std::error_code(lStatus, std::system_category());
@@ -458,7 +458,7 @@ namespace m4x1m1l14n
 				long lData = 0;
 				DWORD cbData = sizeof(lData);
 
-				LSTATUS lStatus = RegQueryValueEx(m_hKey, name.c_str(), nullptr, nullptr, reinterpret_cast<LPBYTE>(&lData), &cbData);
+				LSTATUS lStatus = RegQueryValueExW(m_hKey, name.c_str(), nullptr, nullptr, reinterpret_cast<LPBYTE>(&lData), &cbData);
 				if (lStatus != ERROR_SUCCESS)
 				{
 					auto ec = std::error_code(lStatus, std::system_category());
@@ -488,7 +488,7 @@ namespace m4x1m1l14n
 			{
 				DWORD cbData = sizeof(value);
 
-				LSTATUS lStatus = RegSetValueEx(m_hKey, name.c_str(), 0, REG_DWORD, reinterpret_cast<const LPBYTE>(&value), cbData);
+				LSTATUS lStatus = RegSetValueExW(m_hKey, name.c_str(), 0, REG_DWORD, reinterpret_cast<const LPBYTE>(&value), cbData);
 				if (lStatus != ERROR_SUCCESS)
 				{
 					auto ec = std::error_code(lStatus, std::system_category());
@@ -517,7 +517,7 @@ namespace m4x1m1l14n
 				long long llData = 0;
 				DWORD cbData = sizeof(llData);
 
-				LSTATUS lStatus = RegQueryValueEx(m_hKey, name.c_str(), nullptr, nullptr, reinterpret_cast<LPBYTE>(&llData), &cbData);
+				LSTATUS lStatus = RegQueryValueExW(m_hKey, name.c_str(), nullptr, nullptr, reinterpret_cast<LPBYTE>(&llData), &cbData);
 				if (lStatus != ERROR_SUCCESS)
 				{
 					auto ec = std::error_code(lStatus, std::system_category());
@@ -547,7 +547,7 @@ namespace m4x1m1l14n
 			{
 				DWORD cbData = sizeof(value);
 
-				LSTATUS lStatus = RegSetValueEx(m_hKey, name.c_str(), 0, REG_QWORD, reinterpret_cast<const LPBYTE>(&value), cbData);
+				LSTATUS lStatus = RegSetValueExW(m_hKey, name.c_str(), 0, REG_QWORD, reinterpret_cast<const LPBYTE>(&value), cbData);
 				if (lStatus != ERROR_SUCCESS)
 				{
 					auto ec = std::error_code(lStatus, std::system_category());
@@ -578,7 +578,7 @@ namespace m4x1m1l14n
 
 				DWORD dwFlags = RRF_RT_REG_EXPAND_SZ | RRF_NOEXPAND | RRF_RT_REG_SZ;
 
-				LSTATUS lStatus = RegGetValue(m_hKey, nullptr, name.c_str(), dwFlags, &dwType, nullptr, &cbData);
+				LSTATUS lStatus = RegGetValueW(m_hKey, nullptr, name.c_str(), dwFlags, &dwType, nullptr, &cbData);
 				if (lStatus != ERROR_SUCCESS)
 				{
 					auto ec = std::error_code(lStatus, std::system_category());
@@ -600,7 +600,7 @@ namespace m4x1m1l14n
 					auto data = new TCHAR[cbData / sizeof(TCHAR)];
 					assert(data != nullptr);
 
-					lStatus = RegGetValue(m_hKey, nullptr, name.c_str(), dwFlags, &dwType, reinterpret_cast<LPBYTE>(data), &cbData);
+					lStatus = RegGetValueW(m_hKey, nullptr, name.c_str(), dwFlags, &dwType, reinterpret_cast<LPBYTE>(data), &cbData);
 
 					std::exception_ptr pex;
 
@@ -637,7 +637,7 @@ namespace m4x1m1l14n
 			{
 				auto cbData = static_cast<DWORD>(value.length());
 
-				LSTATUS lStatus = RegSetValueEx(m_hKey, name.c_str(), 0, REG_SZ, reinterpret_cast<const BYTE*>(value.c_str()), cbData * sizeof(TCHAR));
+				LSTATUS lStatus = RegSetValueExW(m_hKey, name.c_str(), 0, REG_SZ, reinterpret_cast<const BYTE*>(value.c_str()), cbData * sizeof(TCHAR));
 				if (lStatus != ERROR_SUCCESS)
 				{
 					auto ec = std::error_code(lStatus, std::system_category());
@@ -660,7 +660,7 @@ namespace m4x1m1l14n
 			{
 				auto cbData = static_cast<DWORD>(value.length());
 
-				LSTATUS lStatus = RegSetValueEx(m_hKey, name.c_str(), 0, REG_EXPAND_SZ, reinterpret_cast<const BYTE*>(value.c_str()), cbData * sizeof(TCHAR));
+				LSTATUS lStatus = RegSetValueExW(m_hKey, name.c_str(), 0, REG_EXPAND_SZ, reinterpret_cast<const BYTE*>(value.c_str()), cbData * sizeof(TCHAR));
 				if (lStatus != ERROR_SUCCESS)
 				{
 					auto ec = std::error_code(lStatus, std::system_category());
@@ -684,7 +684,7 @@ namespace m4x1m1l14n
 				DWORD dwSubKeys = 0;
 				DWORD dwLongestSubKeyLen = 0;
 
-				LSTATUS lStatus = RegQueryInfoKey
+				LSTATUS lStatus = RegQueryInfoKeyW
 				(
 					m_hKey,					// Key handle
 					nullptr,				// Buffer for registry ked class name
@@ -719,7 +719,7 @@ namespace m4x1m1l14n
 				{
 					DWORD dwLen = dwLongestSubKeyLen;
 
-					lStatus = RegEnumKeyEx
+					lStatus = RegEnumKeyExW
 					(
 						m_hKey,			// Key handle
 						i,				// Subkey index
@@ -853,7 +853,7 @@ namespace m4x1m1l14n
 
 				if (data != nullptr)
 				{
-					LSTATUS lStatus = RegQueryValueEx(m_hKey, name.c_str(), nullptr, nullptr, data, &cbData);
+					LSTATUS lStatus = RegQueryValueExW(m_hKey, name.c_str(), nullptr, nullptr, data, &cbData);
 					if (lStatus == ERROR_SUCCESS)
 					{
 						ret = std::shared_ptr<BYTE>(data, std::default_delete<BYTE[]>());
@@ -867,7 +867,7 @@ namespace m4x1m1l14n
 			{
 				DWORD cbData = DWORD(len);
 
-				LSTATUS lStatus = RegSetValueEx(m_hKey, name.c_str(), 0, REG_BINARY, pData, DWORD(len));
+				LSTATUS lStatus = RegSetValueExW(m_hKey, name.c_str(), 0, REG_BINARY, pData, DWORD(len));
 
 				return (lStatus == ERROR_SUCCESS);
 			}
@@ -880,7 +880,7 @@ namespace m4x1m1l14n
 
 				RegistryValue ret;
 
-				LSTATUS err = RegQueryValueEx(m_hKey, name.c_str(), nullptr, &dwType, nullptr, &cbData);
+				LSTATUS err = RegQueryValueExW(m_hKey, name.c_str(), nullptr, &dwType, nullptr, &cbData);
 				if (err == ERROR_SUCCESS)
 				{
 					switch (dwType)
@@ -890,7 +890,7 @@ namespace m4x1m1l14n
 						long value = 0;
 						cbData = sizeof(value);
 
-						if (RegQueryValueEx(m_hKey, name.c_str(), nullptr, nullptr, (LPBYTE)&value, &cbData) == ERROR_SUCCESS)
+						if (RegQueryValueExW(m_hKey, name.c_str(), nullptr, nullptr, (LPBYTE)&value, &cbData) == ERROR_SUCCESS)
 						{
 							ret = RegistryInt32(value);
 						}
@@ -902,7 +902,7 @@ namespace m4x1m1l14n
 						long long value = 0;
 						cbData = sizeof(value);
 
-						if (RegQueryValueEx(m_hKey, name.c_str(), nullptr, nullptr, (LPBYTE)&value, &cbData) == ERROR_SUCCESS)
+						if (RegQueryValueExW(m_hKey, name.c_str(), nullptr, nullptr, (LPBYTE)&value, &cbData) == ERROR_SUCCESS)
 						{
 							ret = RegistryInt64(value);
 						}
@@ -914,7 +914,7 @@ namespace m4x1m1l14n
 						WCHAR* data = new WCHAR[cbData];
 						if (data != nullptr)
 						{
-							LSTATUS lStatus = RegQueryValueEx(m_hKey, name.c_str(), nullptr, nullptr, (LPBYTE)data, &cbData);
+							LSTATUS lStatus = RegQueryValueExW(m_hKey, name.c_str(), nullptr, nullptr, (LPBYTE)data, &cbData);
 							if (lStatus == ERROR_SUCCESS)
 							{
 								std::wstring s(data, cbData);
