@@ -319,7 +319,7 @@ namespace holofetch {
         // avatar_.border_top = "┌" + std::string(avatar_width_ + 1, '─') + "┐";
         // avatar_.border_bottom = "└" + std::string(avatar_width_ + 1, '─') + "┘";
         
-        if (bool enabled = true; enabled) {
+        if (bool enabled = false; enabled) {
             avatar_.border_left = "{ ";
             avatar_.border_right = "}";
             avatar_.border_top = "+" + std::string(avatar_width_ + 1, '-') + "+";
@@ -346,6 +346,11 @@ namespace holofetch {
             portrait_mode_ = true;
         }
 
+        const bool should_draw_avatar = avatar_pr_.width < con_.width && con_.height > 60;
+        if (!should_draw_avatar) {
+            portrait_mode_ = true;
+        }
+
         if (header_.border_bottom.empty()) {
             /* 
              * [border style: dots]
@@ -366,22 +371,48 @@ namespace holofetch {
             header_.border_bottom = portrait_mode_ 
                 ? std::string(avatar_pr_.width, '.')
                 : std::string(header_.border_left.size() + header_width_ + header_.border_right.size() + 1, '.');
-                
+            
+            bool toggle_ = false;
+            for (auto& c : header_.border_bottom) {
+                if (toggle_) {
+                    c = ' ';
+                }
+                toggle_ = !toggle_;
+            }
+
             // remove top border in portrait mode
             if (!portrait_mode_)
                 header_.border_top = header_.border_bottom;
         }
 
         auto header_pr_ = header_.render(palette_);
+        const bool should_draw_header = header_pr_.width < con_.width && con_.height > (should_draw_avatar ? 75 : 75 - avatar_pr_.height);
 
-        constexpr size_t SECTIONS_DELIMITER_SPACES = 4;
+        constexpr size_t SECTIONS_DELIMITER_SPACES = 2;
 
         if (portrait_mode_) {
             size_t con_width = con_.width;
 
-            while (avatar_pr_.drawln(con_, con_width));
-            while (header_pr_.filldrawln(ANSI::fg_green, con_, con_width));
-            con_.put("\n");
+            if (should_draw_avatar) {
+                while (avatar_pr_.drawln(con_, con_width));
+                con_.put("\n");
+            } else if (should_draw_header) {
+                while (header_pr_.filldrawln(ANSI::fg_green, con_, con_width));
+                con_.put("\n");
+            } 
+            
+            if (!should_draw_avatar && !should_draw_header) {
+                bool first_ = true;
+                for (auto& section : sections) {
+                    auto pr = section.render(palette_);
+                    if (!first_) {
+                        con_.put("\n");
+                    }
+                    first_ = false;
+                    while (pr.drawln(con_, assets::whitespaces.substr(0, 4))); //, con_.width));
+                }
+                return;
+            }
 
             std::vector<prerender> section_prs;
             section_prs.reserve(sections.size());
