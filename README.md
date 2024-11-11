@@ -1,10 +1,6 @@
 # holofetch
 
-Holo is the best waifu @ Spice and Wolf
-
-TODO: renderer::draw refactoring
-
-Current performance ~200-300ms
+fun evening project that got out of control 
 
 ## Screenshots
 
